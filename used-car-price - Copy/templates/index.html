@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Car Price Predictor</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    
+    <!-- FIX: This is now the ONLY stylesheet. The inline <style> block is gone. -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='prediction_styles.css') }}">
+</head>
+
+<body>
+    <a href="{{ url_for('home') }}" class="back-to-home-btn">
+        <i class="fas fa-arrow-left"></i> Back to Home
+    </a>
+
+    <div class="main-wrapper">
+        <div class="card predict-card">
+            
+            <div class="form-panel">
+                <h3 class="panel-title">Car Price Predictor</h3>
+                <p class="panel-subtitle">Enter vehicle details for an accurate AI-powered estimate.</p>
+                
+                <form id="predictionForm" class="predict-form">
+                    
+                    <div class="form-section">
+                        <h4 class="section-title"><i class="fas fa-car"></i> Core Details</h4>
+                    </div>
+                    <div class="input-grid">
+                        <div class="input-group">
+                            <label for="Brand">Brand</label>
+                            <select id="Brand" name="Brand" required>
+                                <option value="" disabled selected>Select Brand</option>
+                                {% for brand in brand_map.keys()|sort %}
+                                    <option value="{{ brand }}">{{ brand }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="input-group">
+                            <label for="Car_Name">Model</label>
+                            <select id="Car_Name" name="Car_Name" required>
+                                <option value="" disabled selected>Select Brand First</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <h4 class="section-title"><i class="fas fa-calendar-alt"></i> Age - Ownership</h4>
+                    </div>
+                    <div class="input-grid">
+                        <div class="input-group">
+                            <label for="Year">Year</label>
+                            <!-- FIX: Safely access form_options -->
+                            <input type="number" id="Year" name="Year" 
+                                   min="{{ form_options.get('Year', {}).get('min', 2000) }}" 
+                                   max="{{ current_year }}" 
+                                   placeholder="e.g., 2018" required>
+                        </div>
+                        <div class="input-group">
+                            <label for="Owner">Owners</label>
+                            <input type="number" id="Owner" name="Owner" 
+                                   min="{{ form_options.get('Owner', {}).get('min', 0) }}" 
+                                   max="{{ form_options.get('Owner', {}).get('max', 5) }}" 
+                                   placeholder="e.g., 1" required>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <h4 class="section-title"><i class="fas fa-tachometer-alt"></i> Usage - Condition</h4>
+                    </div>
+                    <div class="input-grid">
+                        <div class="input-group">
+                            <label for="Kms_Driven">Kms Driven</label>
+                            <input type="number" id="Kms_Driven" name="Kms_Driven" 
+                                   min="{{ form_options.get('Kms_Driven', {}).get('min', 0) }}" 
+                                   placeholder="e.g., 25000" required>
+                        </div>
+                        <div class="input-group">
+                            <label for="Condition">Condition</label>
+                            <select id="Condition" name="Condition" required>
+                                <option value="Excellent">Excellent</option>
+                                <option value="Good">Good</option>
+                                <option value="Fair">Fair</option>
+                            </select>
+                        </div>
+                        <div class="input-group">
+                            <label for="Accidents">Accidents</label>
+                            <input type="number" id="Accidents" name="Accidents" 
+                                   min="{{ form_options.get('Accidents', {}).get('min', 0) }}" 
+                                   max="{{ form_options.get('Accidents', {}).get('max', 10) }}" 
+                                   placeholder="e.g., 0" required>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <h4 class="section-title"><i class="fas fa-cogs"></i> Specs - Maintenance</h4>
+                    </div>
+                    <div class="input-grid">
+                        <div class="input-group">
+                            <label for="Fuel_Type">Fuel Type</label>
+                            <select id="Fuel_Type" name="Fuel_Type" required>
+                                <option value="Petrol">Petrol</option>
+                                <option value="Diesel">Diesel</option>
+                                <option value="CNG">CNG</option>
+                            </select>
+                        </div>
+                        <div class="input-group">
+                            <label for="Transmission">Transmission</label>
+                            <select id="Transmission" name="Transmission" required>
+                                <option value="Manual">Manual</option>
+                                <option value="Automatic">Automatic</option>
+                            </select>
+                        </div>
+                        <div class="input-group">
+                            <label for="Engine_Power(cc)">Engine (cc)</label>
+                            <input type="number" id="Engine_Power(cc)" name="Engine_Power(cc)" 
+                                   min="{{ form_options.get('Engine_Power(cc)', {}).get('min', 600) }}" 
+                                   max="{{ form_options.get('Engine_Power(cc)', {}).get('max', 5000) }}" 
+                                   placeholder="e.g., 1197" required>
+                        </div>
+                        <div class="input-group">
+                            <label for="Mileage(km/l)">Mileage (km/l)</label>
+                            <input type="number" id="Mileage(km/l)" name="Mileage(km/l)" 
+                                   step="{{ form_options.get('Mileage(km/l)', {}).get('step', 0.1) }}" 
+                                   min="{{ form_options.get('Mileage(km/l)', {}).get('min', 5) }}" 
+                                   max="{{ form_options.get('Mileage(km/l)', {}).get('max', 40) }}" 
+                                   placeholder="e.g., 18.5" required>
+                        </div>
+                        <div class="input-group">
+                            <label for="Maintenance_Cost(₹/yr)">Maintenance (₹/yr)</label>
+                            <input type="number" id="Maintenance_Cost(₹/yr)" name="Maintenance_Cost(₹/yr)" 
+                                   step="{{ form_options.get('Maintenance_Cost(₹/yr)', {}).get('step', 100) }}" 
+                                   min="{{ form_options.get('Maintenance_Cost(₹/yr)', {}).get('min', 0) }}" 
+                                   placeholder="e.g., 5000" required>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <h4 class="section-title"><i class="fas fa-shield-alt"></i> Sale - Location</h4>
+                    </div>
+                    <div class="input-grid">
+                        <div class="input-group">
+                            <label for="Seller_Type">Seller Type</label>
+                            <select id="Seller_Type" name="Seller_Type" required>
+                                <option value="Individual">Individual</option>
+                                <option value="Dealer">Dealer</option>
+                            </select>
+                        </div>
+                        <div class="input-group">
+                            <label for="City">City</label>
+                            <select id="City" name="City" required>
+                                <option value="Mumbai">Mumbai</option>
+                                <option value="Delhi">Delhi</option>
+                                <option value="Bangalore">Bangalore</option>
+                                <option value="Chennai">Chennai</option>
+                                <option value_disabled>Kolkata</option>
+                            </select>
+                        </div>
+                        <div class="input-group">
+                            <label for="Present_Price(Lakhs)">Present Price (Lakhs)</label>
+                            <input type="number" id="Present_Price(Lakhs)" name="Present_Price(Lakhs)" 
+                                   step="{{ form_options.get('Present_Price(Lakhs)', {}).get('step', 0.01) }}" 
+                                   min="{{ form_options.get('Present_Price(Lakhs)', {}).get('min', 0.1) }}" 
+                                   placeholder="e.g., 8.5" required>
+                        </div>
+                         <div class="input-group">
+                            <label for="Insurance_Age(yrs)">Insurance Age (yrs)</label>
+                            <input type="number" id="Insurance_Age(yrs)" name="Insurance_Age(yrs)" 
+                                   min="{{ form_options.get('Insurance_Age(yrs)', {}).get('min', 0) }}" 
+                                   max="{{ form_options.get('Insurance_Age(yrs)', {}).get('max', 15) }}" 
+                                   placeholder="e.g., 1" required>
+                        </div>
+                    </div>
+                    
+                    <button type="submit" class="cta-button" id="predictButton">
+                        <i class="fas fa-calculator"></i> Predict Price
+                    </button>
+                    <button type="reset" class="secondary-button">
+                        <i class="fas fa-undo"></i> Reset
+                    </button>
+                </form>
+            </div>
+            
+            <div class="result-panel">
+                <h3 class="panel-title">AI Price Analysis</h3>
+                
+                <div id="initialMessage">
+                    <i class="fas fa-chart-line"></i>
+                    <p>Your price analysis will appear here.</p>
+                </div>
+                
+                <div id="loadingSpinner" style="display: none;">
+                    <div class="spinner"></div>
+                    <p>Calculating...</p>
+                </div>
+                
+                <div id="resultDisplay" style="display: none;">
+                    <div class="predicted-price-box">
+                        <p>Resale Estimate (Lakhs)</p>
+                        <h4 id="predictedPriceElem">₹ -- Lakhs</h4>
+                    </div>
+                    <div class="result-chart-container">
+                        <canvas id="priceComparisonChart"></canvas>
+                    </div>
+                    <div class="result-details">
+                        <p><i class="fas fa-calendar-alt"></i> Year: <span id="res-year">--</span></p>
+                        <p><i class="fas fa-road"></i> Kms: <span id="res-kms">--</span></p>
+                        <p><i class="fas fa-gas-pump"></i> Fuel: <span id="res-fuel">--</span></p>
+                        <p><i class="fas fa-car-side"></i> Model: <span id="res-brand">--</span></p>
+                        <p><i class="fas fa-city"></i> City: <span id="res-city">--</span></p>
+                        <p><i class="fas fa-cogs"></i> Trans: <span id="res-transmission">--</span></p>
+                    </div>
+                    <p class="disclaimer">
+                        Accuracy: 94% confidence rating.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    // make the map available as a global window property for other scripts
+        window.brandModelMap = {{ brand_map | tojson }};
+    </script>
+
+    
+    <!-- Link to the external JS logic file -->
+    <script src="{{ url_for('static', filename='predict_logic.js') }}"></script>
+    
+</body>
+</html>

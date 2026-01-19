@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Car Predictor Pro - Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='home_styles.css') }}">
+</head>
+<body>
+    
+    <header class="navbar">
+        <div class="logo">Car Predictor Pro</div>
+        <nav>
+            <a href="{{ url_for('home') }}" class="active-link">Home</a>
+            <a href="{{ url_for('predict_page') }}">Predict</a>
+            <a href="{{ url_for('analysis') }}">Analysis</a>
+            <a href="{{ url_for('compare') }}">Compare</a>
+            <a href="{{ url_for('contact') }}">Contact</a>
+        </nav>
+        <div class="user-actions">
+            <a href="{{ url_for('login') }}" class="cta-button">Sign In</a>
+        </div>
+    </header>
+
+    <main class="container">
+        <section class="hero-section">
+            <div class="hero-text fade-in">
+                <h1>Welcome to <span class="highlight-text">Car Predictor Pro</span></h1>
+                <p class="fade-in delay-1">Your AI-powered assistant for accurate used car valuation. Explore market trends, predict prices, and compare vehicles with confidence.</p>
+                <a href="{{ url_for('predict_page') }}" class="cta-button hero-cta fade-in delay-2">
+                    Get Started <i class="fas fa-arrow-right"></i>
+                </a>
+            </div>
+            <div class="hero-image fade-in delay-1">
+                <img src="{{ url_for('static', filename='lol.png') }}" alt="Car Illustration">
+            </div>
+        </section>
+
+    </main>
+    
+    <section class="feature-grid">
+        <div class="container" style="display: contents;"> <a href="{{ url_for('predict_page') }}" class="card prediction-card fade-in delay-2">
+                <i class="fas fa-car-side card-icon green-icon"></i>
+                <h3>Car Price Prediction</h3>
+                <p>Get an instant, reliable estimate for any used car.</p>
+                <div class="card-action">Go to Predict &rarr;</div>
+            </a>
+            
+            <a href="{{ url_for('analysis') }}" class="card analysis-card fade-in delay-3">
+                <i class="fas fa-chart-line card-icon yellow-icon"></i>
+                <h3>Car Analysis</h3>
+                <p>Explore market trends and key pricing factors.</p>
+                <div class="card-action">View Analysis &rarr;</div>
+            </a>
+
+            <a href="{{ url_for('compare') }}" class="card compare-card fade-in delay-4">
+                <i class="fas fa-balance-scale card-icon blue-icon"></i>
+                <h3>Compare Two Cars</h3>
+                <p>Side-by-side price estimation for two vehicles.</p>
+                <div class="card-action">Go to Compare &rarr;</div>
+            </a>
+
+            <a href="{{ url_for('contact') }}" class="card contact-card fade-in delay-5">
+                <i class="fas fa-headset card-icon purple-icon"></i>
+                <h3>Contact Us</h3>
+                <p>Have questions or feedback? We'd love to hear from you.</p>
+                <div class="card-action">Get in Touch &rarr;</div>
+            </a>
+        </div>
+    </section>
+
+</body>
+</html>

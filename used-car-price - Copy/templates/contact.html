@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Us - Car Predictor Pro</title>
+    <!-- Load Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Load Poppins Font from Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <!-- Load Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    
+    <style>
+        :root {
+            --primary-blue: #007bff;
+            --secondary-purple: #6610f2;
+            --gradient-start: #007bff;
+            --gradient-end: #6610f2;
+            --shadow-glow: rgba(102, 16, 242, 0.5);
+        }
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            color: white;
+            scroll-behavior: smooth; /* For smooth scroll */
+        }
+
+        /* Glassmorphism Card Style */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.15); /* Semi-transparent white */
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-radius: 1.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+        }
+
+        /* Input Field Styling and Focus Glow */
+        .glass-input {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            transition: all 0.3s ease;
+        }
+        .glass-input:focus {
+            background: rgba(255, 255, 255, 0.2);
+            box-shadow: 0 0 0 3px rgba(102, 16, 242, 0.5); /* Focus Glow */
+            border-color: var(--secondary-purple);
+        }
+        .glass-input::placeholder {
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        /* Gradient Button and Hover Glow */
+        .gradient-button {
+            background: linear-gradient(90deg, var(--gradient-start), var(--gradient-end));
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+        .gradient-button:hover {
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 0 0 25px var(--shadow-glow); /* Hover Glow */
+        }
+        
+        /* Social Icon Hover Glow */
+        .social-icon:hover {
+            color: var(--secondary-purple);
+            transform: scale(1.2);
+            text-shadow: 0 0 10px var(--secondary-purple);
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-in {
+            animation: fadeInUp 0.8s ease-out forwards;
+        }
+        .delay-0 { animation-delay: 0s; }
+        .delay-1 { animation-delay: 0.2s; }
+        .delay-2 { animation-delay: 0.4s; }
+
+        /* Floating Alert Animation */
+        @keyframes fadeInOut {
+            0% { opacity: 0; transform: translateY(-20px); }
+            5% { opacity: 1; transform: translateY(0); }
+            95% { opacity: 1; transform: translateY(0); }
+            100% { opacity: 0; transform: translateY(-20px); }
+        }
+        .floating-alert {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 50;
+            opacity: 0;
+            padding: 1rem 2rem;
+            border-radius: 0.75rem;
+            background-color: #20c997; /* Green for success */
+            box-shadow: 0 4px 15px rgba(32, 201, 151, 0.6);
+            animation: fadeInOut 4s ease-in-out forwards; /* 4 second duration */
+        }
+    </style>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'primary-blue': '#007bff',
+                        'secondary-purple': '#6610f2',
+                    },
+                    borderRadius: {
+                        'xl': '1.5rem',
+                    }
+                }
+            }
+        }
+
+        // Smooth scroll to top when success message is present
+        document.addEventListener('DOMContentLoaded', () => {
+            const successAlert = document.getElementById('success-alert');
+            if (successAlert) {
+                // Smooth scroll to top when success message appears
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        });
+    </script>
+</head>
+<body class="flex flex-col">
+
+    <!-- Navbar (Consistent across all pages) -->
+    <nav class="p-4 flex flex-col md:flex-row justify-between items-center z-20 w-full">
+        <div class="text-3xl font-extrabold tracking-widest mb-4 md:mb-0">
+            Car Predictor Pro
+        </div>
+        <div class="flex flex-wrap justify-center items-center space-x-4 md:space-x-6">
+            <!-- Navigation Links -->
+            <a href="/home" class="text-white hover:text-opacity-80 transition duration-300">Home</a>
+            <a href="/predict" class="text-white hover:text-opacity-80 transition duration-300">Predict</a>
+            <a href="/compare" class="text-white hover:text-opacity-80 transition duration-300">Compare</a>
+            <a href="/analysis" class="text-white hover:text-opacity-80 transition duration-300">Analysis</a>
+            <!-- Highlight Contact as active -->
+            <a href="/contact" class="font-bold text-white border-b-2 border-white pb-0.5">Contact</a>
+            
+            <!-- Logout Button (Top Right) & User Display -->
+            {% if g.user_name %}
+                <span class="text-sm text-white/70 ml-4 hidden sm:inline">Hello, {{ g.user_name }}</span>
+                <a href="/logout" class="bg-white text-secondary-purple px-4 py-1 rounded-full text-sm font-semibold hover:bg-gray-200 transition duration-300">Logout</a>
+            {% else %}
+                <a href="/login" class="bg-white text-secondary-purple px-4 py-1 rounded-full text-sm font-semibold hover:bg-gray-200 transition duration-300">Login</a>
+            {% endif %}
+        </div>
+    </nav>
+
+    <!-- Success Message Alert (Floating) -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                {% if category == 'success' %}
+                    <div id="success-alert" class="floating-alert text-white flex items-center">
+                        <i class="fas fa-check-circle text-xl mr-3"></i>
+                        <span>✅ Message sent successfully! We'll get back to you soon.</span>
+                    </div>
+                {% endif %}
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <!-- Main Content Container -->
+    <main class="flex-grow container mx-auto px-4 py-8 md:py-12 z-10 max-w-6xl">
+        
+        <!-- Hero Section -->
+        <section class="text-center mb-16 animate-in delay-0">
+            <h1 class="text-6xl font-extrabold mb-4 tracking-tighter">
+                Get in Touch
+            </h1>
+            <p class="text-xl font-light text-white/80 max-w-3xl mx-auto">
+                We’d love to hear from you! Whether you have feedback, questions, or suggestions, our team is here to help.
+            </p>
+        </section>
+
+        <!-- Main Layout: Contact Info (Left) and Form (Right) -->
+        <section class="grid grid-cols-1 lg:grid-cols-2 gap-8 animate-in delay-1">
+
+            <!-- Left: Contact Information Card -->
+            <div class="glass-card p-8 h-full flex flex-col justify-between">
+                <div>
+                    <h2 class="text-3xl font-bold mb-6 border-b border-white/30 pb-3">Our Details</h2>
+                    
+                    <ul class="space-y-6 text-lg text-white/90">
+                        <li class="flex items-start">
+                            <i class="fas fa-map-marker-alt text-2xl mr-4 mt-1 text-secondary-purple"></i>
+                            <div>
+                                <strong class="block font-semibold">Address</strong>
+                                Ernakulam, Kerala, India
+                            </div>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-phone-alt text-2xl mr-4 mt-1 text-secondary-purple"></i>
+                            <div>
+                                <strong class="block font-semibold">Phone</strong>
+                                +91 98765 43210
+                            </div>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-envelope text-2xl mr-4 mt-1 text-secondary-purple"></i>
+                            <div>
+                                <strong class="block font-semibold">Email</strong>
+                                support@carpredictorpro.com
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Social Icons -->
+                <div class="mt-10 pt-6 border-t border-white/30">
+                    <h3 class="text-xl font-semibold mb-4">Follow Us</h3>
+                    <div class="flex space-x-6 justify-start">
+                        <a href="#" class="social-icon text-4xl text-white/80 transition duration-300">
+                            <i class="fab fa-linkedin"></i>
+                        </a>
+                        <a href="#" class="social-icon text-4xl text-white/80 transition duration-300">
+                            <i class="fab fa-github"></i>
+                        </a>
+                        <a href="#" class="social-icon text-4xl text-white/80 transition duration-300">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right: Contact Form -->
+            <div class="glass-card p-8 animate-in delay-2">
+                <h2 class="text-3xl font-bold mb-6 border-b border-white/30 pb-3">Send Us a Message</h2>
+                <form action="/contact" method="POST" class="space-y-6">
+                    
+                    <div>
+                        <label for="name" class="block text-sm font-medium mb-2 text-white/90">Your Name</label>
+                        <input type="text" id="name" name="name" required
+                               class="glass-input w-full p-3 rounded-xl focus:outline-none">
+                    </div>
+
+                    <div>
+                        <label for="email" class="block text-sm font-medium mb-2 text-white/90">Your Email</label>
+                        <input type="email" id="email" name="email" required
+                               class="glass-input w-full p-3 rounded-xl focus:outline-none">
+                    </div>
+
+                    <div>
+                        <label for="subject" class="block text-sm font-medium mb-2 text-white/90">Subject</label>
+                        <input type="text" id="subject" name="subject" required
+                               class="glass-input w-full p-3 rounded-xl focus:outline-none">
+                    </div>
+
+                    <div>
+                        <label for="message" class="block text-sm font-medium mb-2 text-white/90">Message</label>
+                        <textarea id="message" name="message" rows="5" required
+                                  class="glass-input w-full p-3 rounded-xl focus:outline-none"></textarea>
+                    </div>
+
+                    <button type="submit"
+                            class="gradient-button w-full py-3 rounded-xl text-lg font-semibold shadow-lg hover:shadow-xl focus:outline-none">
+                        Send Message <i class="fas fa-paper-plane ml-2"></i>
+                    </button>
+                </form>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="text-center text-white/70 p-4 mt-8">
+    </footer>
+
+</body>
+</html>

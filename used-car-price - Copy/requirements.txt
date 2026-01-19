@@ -1,0 +1,8 @@
+Flask
+Flask-Mail
+pandas
+scikit-learn
+numpy
+Flask-SQLAlchemy
+Werkzeug
+xgboost

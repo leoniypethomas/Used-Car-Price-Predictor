@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Premium Car Comparison Tool</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    
+    <link rel="stylesheet" href="{{ url_for('static', filename='compare_styles.css') }}">
+</head>
+
+<body onscroll="toggleStickyHeader()">
+
+    <div id="sticky-header">
+        <div class="container" style="display: flex; gap: 10px;">
+            <div class="car-name" id="sticky-name-1">Car 1</div>
+            <div class="car-name" id="sticky-name-2">Car 2</div>
+            <div class="car-name desktop-only" id="sticky-name-3">Car 3</div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="page-header">
+            <h1>Car Price & Specifications Comparison</h1>
+        </div>
+
+        <a href="{{ url_for('home') }}" class="back-to-home-btn">
+            <i class="fas fa-arrow-left"></i> Back to Home
+        </a>
+
+        <div class="selection-container">
+            <div class="car-slot fade-in" data-slot="1">
+                <div class="car-header-banner">
+                    <div class="car-thumbnail-wrapper" id="car-img-wrapper-1">
+                        <i class="fas fa-car" style="font-size: 3.5em; color: #CCC;"></i>
+                    </div>
+                </div>
+                <div class="car-content">
+                    <h3 id="car-title-1">Select Car 1</h3>
+                    <ul class="car-data-list">
+                        <li><span><i class="fas fa-indian-rupee-sign"></i> Price (Lakhs)</span> <span id="price-1">--</span></li>
+                        <li><span><i class="fas fa-gas-pump"></i> Mileage (kmpl)</span> <span id="mileage-1">--</span></li>
+                        <li><span><i class="fas fa-tachometer-alt"></i> Power (BHP)</span> <span id="power-1">--</span></li>
+                    </ul>
+                    <button class="select-btn" onclick="openSelectionModal(1)">Select Car</button>
+                </div>
+            </div>
+
+            <div class="vs-badge">VS</div>
+            
+            <div class="car-slot fade-in" data-slot="2" style="animation-delay: 0.1s;">
+                <div class="car-header-banner">
+                    <div class="car-thumbnail-wrapper" id="car-img-wrapper-2">
+                        <i class="fas fa-car" style="font-size: 3.5em; color: #CCC;"></i>
+                    </div>
+                </div>
+                <div class="car-content">
+                    <h3 id="car-title-2">Select Car 2</h3>
+                    <ul class="car-data-list">
+                        <li><span><i class="fas fa-indian-rupee-sign"></i> Price (Lakhs)</span> <span id="price-2">--</span></li>
+                        <li><span><i class="fas fa-gas-pump"></i> Mileage (kmpl)</span> <span id="mileage-2">--</span></li>
+                        <li><span><i class="fas fa-tachometer-alt"></i> Power (BHP)</span> <span id="power-2">--</span></li>
+                    </ul>
+                    <button class="select-btn" onclick="openSelectionModal(2)">Select Car</button>
+                </div>
+            </div>
+            
+            <div class="car-slot fade-in desktop-only" data-slot="3" style="animation-delay: 0.2s;">
+                <div class="car-header-banner">
+                    <div class="car-thumbnail-wrapper" id="car-img-wrapper-3">
+                        <i class="fas fa-car" style="font-size: 3.5em; color: #CCC;"></i>
+                    </div>
+                </div>
+                <div class="car-content">
+                    <h3 id="car-title-3">Select Car 3</h3>
+                    <ul class="car-data-list">
+                        <li><span><i class="fas fa-indian-rupee-sign"></i> Price (Lakhs)</span> <span id="price-3">--</span></li>
+                        <li><span><i class="fas fa-gas-pump"></i> Mileage (kmpl)</span> <span id="mileage-3">--</span></li>
+                        <li><span><i class="fas fa-tachometer-alt"></i> Power (BHP)</span> <span id="power-3">--</span></li>
+                    </ul>
+                    <button class="select-btn" onclick="openSelectionModal(3)">Select Car</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="comparison-area" id="comparison-area-anchor">
+            
+            <div class="tabs">
+                <button class="tab-btn active" data-tab="specs">🧮 Summary & Price</button>
+                <button class="tab-btn" data-tab="engine">⚙️ Performance & Engine</button>
+                <button class="tab-btn" data-tab="comfort">🪑 Comfort & Features</button>
+                <button class="tab-btn" data-tab="dimensions">🧱 Dimensions & Capacity</button>
+                <button class="tab-btn" data-tab="safety">🛡️ Safety & Ratings</button>
+                <button class="tab-btn" data-tab="finance">💸 Finance & EMI</button>
+            </div>
+
+            <div class="tab-content active" id="tab-specs">
+                <table class="comp-table">
+                    <thead>
+                        <tr>
+                            <th>Summary & Price</th>
+                            <th id="comp-car-1-name">Car 1</th>
+                            <th id="comp-car-2-name">Car 2</th>
+                            <th id="comp-car-3-name" class="desktop-only">Car 3</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr data-stat="price"><td>Price (₹ Lakhs)</td><td class="comp-val-1">--</td><td class="comp-val-2">--</td><td class="comp-val-3 desktop-only">--</td></tr>
+                        <tr data-stat="fuel"><td>Fuel Type</td><td class="comp-val-1">--</td><td class="comp-val-2">--</td><td class="comp-val-3 desktop-only">--</td></tr>
+                        <tr data-stat="transmission"><td>Transmission</td><td class="comp-val-1">--</td><td class="comp-val-2">--</td><td class="comp-val-3 desktop-only">--</td></tr>
+                        <tr data-stat="mileage"><td>Mileage (kmpl)</td><td class="comp-val-1">--</td><td class="comp-val-2">--</td><td class="comp-val-3 desktop-only">--</td></tr>
+                    </tbody>
+                </table>
+                <div id="price-mileage-chart" style="height: 300px; margin-top: 30px; display: none;">
+                    <canvas id="compChart"></canvas>
+                </div>
+            </div>
+
+            <div class="tab-content" id="tab-engine" style="display: none;">
+                 <table class="comp-table">
+                    <thead><tr><th>Performance & Engine</th><th colspan="3"></th></tr></thead>
+                    <tbody>
+                        <tr data-stat="power"><td>Max Power (bhp)</td><td class="comp-val-1">--</td><td class="comp-val-2">--</td><td class="comp-val-3 desktop-only">--</td></tr>
+                        <tr data-stat="torque"><td>Max Torque (Nm)</td><td class="comp-val-1">--</td><td class="comp-val-2">--</td><td class="comp-val-3 desktop-only">--</td></tr>
+                        <tr data-stat="engine_cc"><td>Engine Displacement (cc)</td><td class="comp-val-1">--</td><td class="comp-val-2">--</td><td class="comp-val-3 desktop-only">--</td></tr>
+                        <tr data-stat="top_speed"><td>Top Speed (km/h)</td><td class="comp-val-1">--</td><td class="comp-val-2">--</td><td class="comp-val-3 desktop-only">--</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="tab-content" id="tab-comfort" style="display: none;">
+                 <table class="comp-table">
+                    <thead><tr><th>Comfort & Features</th><th colspan="3"></th></tr></thead>
+                    <tbody>
+                        <tr data-stat="touchscreen"><td>Touchscreen Infotainment</td><td class="comp-val-1">--</td><td class="comp-val-2">--</td><td class="comp-val-3 desktop-only">--</td></tr>
+                        <tr data-stat="sunroof"><td>Sunroof/Moonroof</td><td class="comp-val-1">--</td><td class="comp-val-2">--</td><td class="comp-val-3 desktop-only">--</td></tr>
+                        <tr data-stat="ac_type"><td>AC Type</td><td class="comp-val-1">--</td><td class="comp-val-2">--</td><td class="comp-val-3 desktop-only">--</td></tr>
+                        <tr data-stat="seat_material"><td>Seat Material</td><td class="comp-val-1">--</td><td class="comp-val-2">--</td><td class="comp-val-3 desktop-only">--</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="tab-content" id="tab-dimensions" style="display: none;">
+                 <table class="comp-table">
+                    <thead><tr><th>Dimensions & Capacity</th><th colspan="3"></th></tr></thead>
+                    <tbody>
+                        <tr data-stat="length"><td>Length (mm)</td><td class="comp-val-1">--</td><td class="comp-val-2">--</td><td class="comp-val-3 desktop-only">--</td></tr>
+                        <tr data-stat="width"><td>Width (mm)</td><td class="comp-val-1">--</td><td class="comp-val-2">--</td><td class="comp-val-3 desktop-only">--</td></tr>
+                        <tr data-stat="boot_space"><td>Boot Space (L)</td><td class="comp-val-1">--</td><td class="comp-val-2">--</td><td class="comp-val-3 desktop-only">--</td></tr>
+                        <tr data-stat="ground_clearance"><td>Ground Clearance (mm)</td><td class="comp-val-1">--</td><td class="comp-val-2">--</td><td class="comp-val-3 desktop-only">--</td></tr>
+                        <tr data-stat="fuel_tank"><td>Fuel Tank (L)</td><td class="comp-val-1">--</td><td class="comp-val-2">--</td><td class="comp-val-3 desktop-only">--</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="tab-content" id="tab-safety" style="display: none;">
+                 <table class="comp-table">
+                    <thead><tr><th>Safety & Build Quality</th><th colspan="3"></th></tr></thead>
+                    <tbody>
+                        <tr data-stat="safety_rating"><td>Global NCAP Rating (Stars)</td><td class="comp-val-1">--</td><td class="comp-val-2">--</td><td class="comp-val-3 desktop-only">--</td></tr>
+                        <tr data-stat="airbags"><td>Airbags (Total)</td><td class="comp-val-1">--</td><td class="comp-val-2">--</td><td class="comp-val-3 desktop-only">--</td></tr>
+                        <tr data-stat="parking_sensors"><td>Parking Sensors (Rear)</td><td class="comp-val-1">--</td><td class="comp-val-2">--</td><td class="comp-val-3 desktop-only">--</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="tab-content" id="tab-finance" style="display: none;">
+                <p style="color: var(--color-text-secondary); padding: 20px;">Use the Price from the summary section to calculate estimated EMI options based on common loan scenarios (80% LTV, 5-7 year tenure).</p>
+            </div>
+        </div>
+    </div>
+
+    <button class="compare-fixed-btn" onclick="highlightDifferences()">
+        <i class="fas fa-balance-scale"></i> Highlight Differences
+    </button>
+    <button class="compare-fixed-btn" style="right: 200px; background-color: #6c757d; box-shadow: 0 8px 15px rgba(108, 117, 125, 0.4);" onclick="resetComparison()">
+        <i class="fas fa-undo"></i> Compare Again
+    </button>
+    
+    <div class="modal-overlay" id="selectionModalOverlay">
+        <div class="modal-content">
+            <h3>Select Car Model (Slot <span id="modal-slot-number">1</span>)</h3>
+            <p style="color: var(--color-text-secondary); margin-bottom: 15px; font-size: 0.9em;">(Mock Data Selector: Select the car type you want to compare)</p>
+            
+            <select id="modal-car-selector">
+                <option value="Swift">Maruti Swift (Hatchback)</option>
+                <option value="Verna">Hyundai Verna (Sedan)</option>
+                <option value="Nexon">Tata Nexon (Compact SUV)</option>
+            </select>
+
+            <button class="select-btn" onclick="addSelectedCar()">Add Selected Car</button>
+            <button class="select-btn modal-close-btn" onclick="closeSelectionModal()">Close</button>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='compare_logic.js') }}"></script>
+</body>
+</html>

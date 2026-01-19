@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Car Price Analysis</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='analysis_styles.css') }}">
+    <style>
+        body { font-family: 'Poppins', sans-serif; }
+    </style>
+</head>
+<body class="text-gray-100">
+
+    <div class="container mx-auto p-4 md:p-8">
+
+        <header class="flex justify-between items-center mb-8 animate-fadeIn">
+            <div>
+                <h1 class="text-4xl font-bold text-white">Car Price Analysis</h1>
+                <p class="text-lg text-gray-300">Key insights into used car market trends.</p>
+            </div>
+            <a href="{{ url_for('home') }}" class="bg-gray-700/50 hover:bg-gray-600/70 text-white font-semibold py-2 px-5 rounded-lg shadow-lg backdrop-blur-sm border border-gray-600 transition-all duration-300">
+                <i class="fas fa-arrow-left mr-2"></i> Back to Home
+            </a>
+        </header>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+            <div class="lg:col-span-1 space-y-6">
+                
+                <div class="card animate-slideUp delay-1">
+                    <div class="card-icon bg-blue-500/20 text-blue-300">
+                        <i class="fas fa-calendar-alt"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-semibold text-white mb-2">Age is the Biggest Factor</h3>
+                        <p class="text-gray-300">
+                            A car's value depreciates most sharply in its first 3-5 years. After that, the price drop becomes more gradual.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="card animate-slideUp delay-2">
+                    <div class="card-icon bg-green-500/20 text-green-300">
+                        <i class="fas fa-gas-pump"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-semibold text-white mb-2">Diesel vs. Petrol</h3>
+                        <p class="text-gray-300">
+                            Diesel cars, especially SUVs, tend to hold their value slightly better than petrol models due to perceived durability and mileage.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="card animate-slideUp delay-3">
+                    <div class="card-icon bg-purple-500/20 text-purple-300">
+                        <i class="fas fa-handshake"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-semibold text-white mb-2">Dealer vs. Individual</h3>
+                        <p class="text-gray-300">
+                            Cars sold by dealers are typically listed at a higher price, but often come with a warranty. Individual sellers offer lower prices but more risk.
+                        </p>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="lg:col-span-2 space-y-6">
+                
+                <div class="chart-card animate-slideUp delay-4">
+                    <h3 class="chart-title">Depreciation Over Time</h3>
+                    <div class="h-64 md:h-80">
+                        <canvas id="ageChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    
+                    <div class="chart-card animate-slideUp delay-5">
+                        <h3 class="chart-title">Market Share by Fuel Type</h3>
+                        <div class="h-64 md:h-80 flex items-center justify-center">
+                            <canvas id="fuelChart"></canvas>
+                        </div>
+                    </div>
+                    
+                    <div class="chart-card animate-slideUp delay-6">
+                        <h3 class="chart-title">Average Price by Seller</h3>
+                        <div class="h-64 md:h-80">
+                            <canvas id="sellerChart"></canvas>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Chart.js Global Config
+        Chart.defaults.color = '#9CA3AF'; // text-gray-400
+        Chart.defaults.font.family = "'Poppins', sans-serif";
+        Chart.defaults.borderColor = 'rgba(255, 255, 255, 0.1)';
+
+        // Chart 1: Depreciation Over Time (Line Chart)
+        const ctxAge = document.getElementById('ageChart').getContext('2d');
+        new Chart(ctxAge, {
+            type: 'line',
+            data: {
+                labels: ['New', '1 Yr', '2 Yrs', '3 Yrs', '4 Yrs', '5 Yrs', '6 Yrs', '7 Yrs'],
+                datasets: [{
+                    label: 'Average Price (in Lakhs)',
+                    data: [12.0, 9.8, 8.5, 7.2, 6.1, 5.2, 4.5, 3.8],
+                    borderColor: '#3B82F6', // text-blue-500
+                    backgroundColor: 'rgba(59, 130, 246, 0.2)',
+                    fill: true,
+                    tension: 0.3,
+                    pointBackgroundColor: '#BFDBFE' // text-blue-200
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false }
+                },
+                scales: {
+                    y: {
+                        title: { display: true, text: 'Avg. Price (₹ Lakhs)' }
+                    },
+                    x: {
+                        title: { display: true, text: 'Car Age' }
+                    }
+                }
+            }
+        });
+
+        // Chart 2: Market Share by Fuel Type (Doughnut Chart)
+        const ctxFuel = document.getElementById('fuelChart').getContext('2d');
+        new Chart(ctxFuel, {
+            type: 'doughnut',
+            data: {
+                labels: ['Petrol', 'Diesel', 'CNG'],
+                datasets: [{
+                    label: 'Market Share',
+                    data: [62, 35, 3],
+                    backgroundColor: [
+                        '#10B981', // text-emerald-500
+                        '#F59E0B', // text-amber-500
+                        '#8B5CF6'  // text-violet-500
+                    ],
+                    hoverOffset: 4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: { padding: 15 }
+                    }
+                }
+            }
+        });
+
+        // Chart 3: Average Price by Seller (Bar Chart)
+        const ctxSeller = document.getElementById('sellerChart').getContext('2d');
+        new Chart(ctxSeller, {
+            type: 'bar',
+            data: {
+                labels: ['Dealer', 'Individual'],
+                datasets: [{
+                    label: 'Average Selling Price (₹ Lakhs)',
+                    data: [6.75, 4.85],
+                    backgroundColor: [
+                        'rgba(59, 130, 246, 0.7)', // Blue
+                        'rgba(16, 185, 129, 0.7)' // Emerald
+                    ],
+                    borderRadius: 4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false }
+                },
+                scales: {
+                    y: {
+                        title: { display: true, text: 'Avg. Price (₹ Lakhs)' },
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>
