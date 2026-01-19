@@ -19,4 +19,6 @@ Scalable for real-world deployment.
 
 Tools & Technologies: Python, XGBoost, Flask, Pandas, NumPy, HTML, CSS, JavaScript
 
+Dataset: https://github.com/leoniypethomas/Used-Car-Price-Predictor/blob/main/used-car-price%20-%20Copy/enhanced_car_dataset.csv
+
 
